@@ -4,6 +4,14 @@ project_type = "web"
 template = "nextjs"
 version = "0.0.35"
 appliedPatches = [ ]
+sub_id = "d6538a2b"
+name = "forest-ranger-platform"
+
+[preview]
+preview_enable = "enabled"
+
+[subprojects]
+path = [ "." ]
 
 [dev]
 build = [ "bash", "./scripts/prepare.sh" ]
@@ -15,3 +23,7 @@ deps = [ "git" ]
 build = [ "bash", "./scripts/build.sh" ]
 run = [ "bash", "./scripts/start.sh" ]
 deps = [ "git" ]
+
+[deploy.profile]
+kind = "service"
+flavor = "web"
