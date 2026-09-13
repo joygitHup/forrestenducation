@@ -7,7 +7,8 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageHeader } from '@/components/admin/page-header';
 import { Link2, Send, KeyRound } from 'lucide-react';
-import { toast } from 'sonner';
+import { MSG, notify } from '@/lib/feedback';
+import { useConfirm } from '@/components/feedback/confirm-provider';
 
 interface System {
   id: number; slug: string; name: string; category: 'treasury'|'province'|'city'|'advice';

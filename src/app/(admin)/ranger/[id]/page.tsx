@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Phone, MapPin, CalendarDays } from 'lucide-react';
 import { PageHeader } from '@/components/admin/page-header';
+import type { Ranger } from '@/types';
 
 interface EventItem {
   id: number;
@@ -25,20 +26,7 @@ interface PatrolItem {
   status: number;
 }
 
-interface Detail {
-  id: number;
-  name: string;
-  phoneMasked: string;
-  idCard?: string;
-  townName: string;
-  villageName?: string;
-  areaName?: string;
-  hireDate?: string;
-  status: number;
-  online: boolean;
-  monthDistance?: number;
-  monthCheckinRate?: number;
-  score?: number;
+interface Detail extends Ranger {
   area?: { name: string; boundary: never[]; keyPoints: never[] };
   patrols: PatrolItem[];
   events: EventItem[];

@@ -1,25 +1,38 @@
 'use client';
+import { useState } from 'react';
 import { useApi } from '@/hooks/use-api';
+import type { Course, StudyListData } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 import { BookOpen, ClipboardCheck, Users } from 'lucide-react';
 import { TabularTable } from '@/components/admin/data-table';
 import { PageHeader } from '@/components/admin/page-header';
 
-interface Record {
-  id: number; rangerName?: string; courseTitle?: string; progress: number; finishTime?: string; createdAt: string;
-}
-interface Resp {
-  success: boolean; data: {
-    records: Record[];
-    stats: { totalCourses: number; totalStudyUnits: number; finishedUnits: number; completionRate: number; totalRangers: number };
-  };
+function buildStudyQuery(keyword: string, courseId: string, finished: string) {
+  const q = new URLSearchParams();
+  if (keyword.trim()) q.set('keyword', keyword.trim());
+  if (courseId !== 'all') q.set('courseId', courseId);
+  if (finished !== 'all') q.set('finished', finished);
+  const qs = q.toString();
+  return qs ? `/api/study?${qs}` : '/api/study';
 }
 
 export default function StudyPage() {
-  const { data, loading } = useApi<Resp>('/api/study');
+  const [keyword, setKeyword] = useState('');
+  const [courseId, setCourseId] = useState('all');
+  const [finished, setFinished] = useState('all');
+  const { data, loading } = useApi<{ success: boolean; data: StudyListData }>(
+    buildStudyQuery(keyword, courseId, finished),
+  );
+  const courses = useApi<{ success: boolean; data: Course[] }>('/api/course');
+
   const stats = data?.data.stats;
   const records = data?.data.records ?? [];
+  const courseOptions = courses.data?.data ?? [];
 
   return (
     <div className="p-6">
@@ -29,6 +42,29 @@ export default function StudyPage() {
         <Stat icon={<ClipboardCheck className="h-5 w-5" />} label="学习总人次" value={String(stats?.totalStudyUnits ?? '-')} />
         <Stat icon={<Users className="h-5 w-5" />} label="已完成人次" value={String(stats?.finishedUnits ?? '-')} />
         <Stat icon={<ClipboardCheck className="h-5 w-5" />} label="完成率" value={`${stats?.completionRate ?? '-'}%`} />
+      </div>
+      <div className="mb-4 flex flex-wrap gap-2">
+        <Input
+          placeholder="搜索护林员/课程"
+          value={keyword}
+          onChange={e => setKeyword(e.target.value)}
+          className="max-w-xs"
+        />
+        <Select value={courseId} onValueChange={setCourseId}>
+          <SelectTrigger className="w-52"><SelectValue placeholder="课程" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">全部课程</SelectItem>
+            {courseOptions.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.title}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={finished} onValueChange={setFinished}>
+          <SelectTrigger className="w-32"><SelectValue placeholder="完成状态" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">全部进度</SelectItem>
+            <SelectItem value="1">已完成</SelectItem>
+            <SelectItem value="0">进行中</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <TabularTable
         loading={loading}

@@ -1,5 +1,5 @@
 'use client';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useSession } from '@/hooks/use-session';
 import AdminSidebar from './sidebar';
@@ -7,7 +7,6 @@ import AdminSidebar from './sidebar';
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useSession();
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -22,7 +21,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
-      <AdminSidebar key={pathname} />
+      <AdminSidebar />
       <main className="flex-1 overflow-y-auto bg-muted/20">{children}</main>
     </div>
   );

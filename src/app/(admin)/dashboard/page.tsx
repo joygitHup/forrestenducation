@@ -1,9 +1,7 @@
 'use client';
-import { api } from '@/lib/api';
 import { useApi } from '@/hooks/use-api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/admin/page-header';
 import { StatCard } from '@/components/admin/stat-card';
 import { LINE_TREND_CFG, PIE_CFG } from '@/components/admin/charts';
@@ -31,13 +29,19 @@ interface DashboardData {
   warnings: { id: number; title: string; rangerName?: string; townName?: string; type: string; level: string; status: number }[];
 }
 
-export default function DashboardPage() {
-  const { data, loading } = useApi<DashboardData>('/api/dashboard');
+interface DashboardResp {
+  success: boolean;
+  data: DashboardData;
+}
 
-  if (loading || !data) {
+export default function DashboardPage() {
+  const { data, loading } = useApi<DashboardResp>('/api/dashboard');
+  const payload = data?.data;
+
+  if (loading || !payload) {
     return <PageSkeleton />;
   }
-  const s = data.stats;
+  const s = payload.stats;
 
   return (
     <div className="p-6">
@@ -81,10 +85,10 @@ export default function DashboardPage() {
             <CardTitle className="text-base">智能预警</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {data.warnings.length === 0 && (
+            {payload.warnings.length === 0 && (
               <div className="py-6 text-center text-sm text-muted-foreground">暂无预警</div>
             )}
-            {data.warnings.map(w => (
+            {payload.warnings.map(w => (
               <div key={w.id} className="flex items-start justify-between gap-3 rounded-lg border p-3">
                 <div className="flex items-start gap-3">
                   <WarningIcon type={w.type} />

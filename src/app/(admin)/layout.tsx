@@ -1,11 +1,5 @@
 import AdminShell from '@/components/admin/shell';
-import { Toaster } from 'sonner';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <AdminShell>{children}</AdminShell>
-      <Toaster richColors position="top-center" />
-    </>
-  );
+  return <AdminShell>{children}</AdminShell>;
 }

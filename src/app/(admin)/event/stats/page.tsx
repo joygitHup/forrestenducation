@@ -1,21 +1,13 @@
 'use client';
 import { useApi } from '@/hooks/use-api';
+import type { EventStats } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BAR_CFG, PIE_CFG } from '@/components/admin/charts';
 import { PageHeader } from '@/components/admin/page-header';
 import { Flame, Clock, CheckCircle2 } from 'lucide-react';
 
-interface StatResp {
-  success: boolean; data: {
-    byStatus: Record<string, number>;
-    byType: Record<string, number>;
-    total: number;
-    timeoutEvents: number;
-  };
-}
-
 export default function EventStatsPage() {
-  const { data, loading } = useApi<StatResp>('/api/event/stats');
+  const { data, loading } = useApi<{ success: boolean; data: EventStats }>('/api/event/stats');
   const d = data?.data;
   const pieData = d ? Object.entries(d.byType).map(([typeName, count]) => ({ typeName, count })) : [];
   const barData = d ? Object.entries(d.byStatus).map(([name, value]) => ({ name, value })) : [];
@@ -50,6 +42,7 @@ function MiniCard({ icon, label, value }: { icon: React.ReactNode; label: string
     </CardContent></Card>
   );
 }
+
 function Loading() {
   return <div className="flex h-full items-center justify-center text-sm text-muted-foreground">加载中…</div>;
 }
