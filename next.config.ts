@@ -1,13 +1,12 @@
 import path from 'path';
-import { fileURLToPath } from 'url';
 import type { NextConfig } from 'next';
 
-// next.config.ts 位于项目根，以自身位置锚定项目目录，避免系统根目录的平台注入文件误导 workspace root
-const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+// dev 从项目根启动，以 cwd 锚定项目根，避免系统根目录 / 的平台注入 package.json 误导 Turbopack workspace root
+const projectRoot = path.resolve(process.cwd());
 
 const nextConfig: NextConfig = {
   turbopack: { root: projectRoot },
-  // outputFileTracingRoot: path.resolve(__dirname, '../../'),  // Uncomment and add 'import path from "path"' if needed
+  outputFileTracingRoot: projectRoot,
   /* config options here */
   allowedDevOrigins: ['*.dev.coze.site'],
   images: {
